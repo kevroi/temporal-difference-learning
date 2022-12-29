@@ -35,22 +35,22 @@ end
 
 
 function monte_carlo(values, step_size=0.1)
-    s_ = 4
-    state_trajectory = [s_]
+    s = 4
+    state_trajectory = [s]
+    local returns
 
     while true
-        s = s_
         if rand() < p_right
-            s_ += 1
+            s += 1
         else
-            s_ += -1
+            s += -1
         end
-        append!(state_trajectory, s_)
+        append!(state_trajectory, s)
 
-        if s_ == 6
+        if s == 7
             returns = 1.0
             break
-        elseif s_ == 0
+        elseif s == 1
             returns = 0.0
             break
         end
@@ -68,35 +68,33 @@ end
 
 
 function estimate_values()
-    fig = plot(legend=:topleft, xlabel="State", ylabel="Value")
+    fig_l = plot(legend=:topleft, xlabel="State", ylabel="Value")
     episodes = [0, 1, 10, 100]
     current_values = V
 
     for i in 0:100
         if i in episodes
-            plot!(fig,["A", "B", "C", "D", "E"], current_values[2:6], label=string(i)*" episodes")
+            plot!(fig_l,["A", "B", "C", "D", "E"], current_values[2:6], label=string(i)*" episodes")
         end
         current_values = temporal_difference(current_values)
     end
 
-    plot!(fig, ["A", "B", "C", "D", "E"], V_true[2:6], label="true values")
+    plot!(fig_l, ["A", "B", "C", "D", "E"], V_true[2:6], label="true values")
     savefig("Example_6_2_left.png")
 
 end
 
 
 function rms_error()
-    fig = plot(legend=:topright, xlabel="Walks/Episode", ylabel="RMS")
+    fig_r = plot(legend=:topright, xlabel="Walks/Episode", ylabel="RMS")
     td_stepsizes = [0.15, 0.1, 0.05]
     mc_stepsizes = [0.01, 0.02, 0.03, 0.04]
 
     runs = 100
-    episodes = 100 + 1
+    episodes = 100
 
     for (i, stepsize) in enumerate(td_stepsizes)
         total_errors = zeros(episodes)
-        alg = "TD"
-        style = "solid"
 
         for run in 1:runs
             errors = []
@@ -109,7 +107,24 @@ function rms_error()
             total_errors += errors
         end
         total_errors /= runs
-        plot!(fig, total_errors, label="α=$stepsize")
+        plot!(fig_r, total_errors, label="TD $stepsize", legendtitle="step size")
+    end
+
+    for (i, stepsize) in enumerate(mc_stepsizes)
+        total_errors = zeros(episodes)
+
+        for run in 1:runs
+            errors = []
+            current_values = deepcopy(V)
+            
+            for e in 1:episodes
+                append!(errors, sqrt(sum((V_true-current_values).^2)/5))
+                current_values = monte_carlo(current_values, stepsize)
+            end
+            total_errors += errors
+        end
+        total_errors /= runs
+        plot!(fig_r, total_errors, label="MC $stepsize", line=(:dash), legendtitle="step size")
     end
     savefig("Example_6_2_right.png")
 end
