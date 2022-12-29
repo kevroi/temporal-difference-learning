@@ -70,7 +70,7 @@ end
 function estimate_values()
     fig_l = plot(legend=:topleft, xlabel="State", ylabel="Value")
     episodes = [0, 1, 10, 100]
-    current_values = V
+    current_values = deepcopy(V)
 
     for i in 0:100
         if i in episodes
@@ -86,7 +86,7 @@ end
 
 
 function rms_error()
-    fig_r = plot(legend=:topright, xlabel="Walks/Episode", ylabel="RMS")
+    fig_r = plot(legend=:topright, xlabel="Walks/Episode", ylabel="Empirical RMS Error, averaged over states")
     td_stepsizes = [0.15, 0.1, 0.05]
     mc_stepsizes = [0.01, 0.02, 0.03, 0.04]
 
@@ -129,5 +129,5 @@ function rms_error()
     savefig("Example_6_2_right.png")
 end
 
-# estimate_values()
+estimate_values()
 rms_error()
