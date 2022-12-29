@@ -4,22 +4,6 @@ V = [0, 0.5, 0.5, 0.5, 0.5, 0.5, 1.0]
 V_true = Array((0:6))/6
 p_right = 0.5
 
-# State data type
-# struct State
-#     x::Int
-# end
-
-# State Space
-# S = [[State(x) for x in 1:7]...]
-# Action Space
-# A = [LEFT, RIGHT]
-# const Movements = Dict(
-#                         "LEFT" => State(-1),
-#                         "RIGHT" => State(1)
-#                         )
-# Overload addition operator
-# Base.:+(s1::State, s2::State) = State(s1.x + s2.x)
-
 function temporal_difference(values, step_size=0.1)
     s_ = 4
     state_trajectory = [s_]
@@ -100,10 +84,35 @@ function estimate_values()
 
 end
 
-estimate_values()
 
+function rms_error()
+    fig = plot(legend=:topright, xlabel="Walks/Episode", ylabel="RMS")
+    td_stepsizes = [0.15, 0.1, 0.05]
+    mc_stepsizes = [0.01, 0.02, 0.03, 0.04]
 
+    runs = 100
+    episodes = 100 + 1
 
+    for (i, stepsize) in enumerate(td_stepsizes)
+        total_errors = zeros(episodes)
+        alg = "TD"
+        style = "solid"
 
+        for run in 1:runs
+            errors = []
+            current_values = deepcopy(V)
+            
+            for e in 1:episodes
+                append!(errors, sqrt(sum((V_true-current_values).^2)/5))
+                current_values = temporal_difference(current_values, stepsize)
+            end
+            total_errors += errors
+        end
+        total_errors /= runs
+        plot!(fig, total_errors, label="α=$stepsize")
+    end
+    savefig("Example_6_2_right.png")
+end
 
-
+# estimate_values()
+rms_error()
