@@ -1,6 +1,6 @@
 using Plots
 
-V = [0, 0.5, 0.5, 0.5, 0.5, 0.5, 1.0]
+V = [0.0, 0.5, 0.5, 0.5, 0.5, 0.5, 1.0]
 V_true = Array((0:6))/6
 p_right = 0.5
 
@@ -58,7 +58,7 @@ function monte_carlo(values, step_size=0.1, batch=false)
         end
     end
 
-    # TD Update at the end of each episode if we aren't batch updating
+    # MC Update at the end of each episode if we aren't batch updating
     if !batch
         for next_state in state_trajectory[begin:end-1]
             values[next_state] += step_size*(returns - values[next_state])
@@ -133,17 +133,16 @@ function rms_error()
     savefig("Example_6_2_right.png")
 end
 
-function batch_updating(method::String, episodes, stepsize=0.001, tolerance=0.001)
+function batch_updating(method, episodes, stepsize=0.001)
     runs = 100
-    total_errors = zeros(episodes)
-    local current_values
+    total_errors = zeros(episodes) 
 
     for run in 1:runs
         current_values = deepcopy(V)
-        current_values[2:6] .= -1
-        errors = []
-        trajectories = []
-        reward_histories = []
+        current_values[2:6] .= -1.0
+        errors = Float64[]
+        trajectories = Int64[]
+        reward_histories = Int64[]
 
         for e in 1:episodes
             if method=="TD"
@@ -157,7 +156,7 @@ function batch_updating(method::String, episodes, stepsize=0.001, tolerance=0.00
             while true
                 updates = zeros(7)
                 for (t, r) in zip(trajectories, reward_histories)
-                    for i in 1:length(t)-1
+                    for i in 1:(length(t)-1)
                         if method=="TD"
                             updates[t[i]] += r[i] + current_values[t[i+1]] - current_values[t[i]]
                         else
@@ -166,12 +165,12 @@ function batch_updating(method::String, episodes, stepsize=0.001, tolerance=0.00
                     end
                 end
                 updates *= stepsize
-                if sum(abs.(updates)) < tolerance
+                if sum(abs.(updates)) < 0.001
                     break
                 end
                 current_values += updates
             end
-            append!(errors, sqrt(sum((V_true-current_values).^2)/5))
+            append!(errors, sqrt(sum((current_values-V_true).^2)/5))
         end
         total_errors += errors
     end
@@ -187,8 +186,8 @@ end
 fig_6_2 = plot(legend=:topright,
                 xlabel="Episodes", ylabel="Empirical RMS Error, averaged over states")
 episodes = 100
-td_errors = batch_updating("TD", episodes, 0.001)
-mc_errors = batch_updating("MC", episodes, 0.001)
+td_errors = batch_updating("TD", episodes)
+mc_errors = batch_updating("MC", episodes)
 plot!(fig_6_2, td_errors, label="TD")
 plot!(fig_6_2, mc_errors, label="MC")
 savefig("Fig_6_2.png")
