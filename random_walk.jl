@@ -23,12 +23,12 @@ function temporal_difference(values, step_size=0.1, batch=false)
         if  !batch
             values[s] += step_size*(r + values[s_] - values[s])
         end
+        append!(reward_history, r)
 
         if s_ == 7 || s_ == 1
             break
         end
 
-        append!(reward_history, r)
     end
 
     # return state_trajectory, reward_history
@@ -138,29 +138,28 @@ function batch_updating(method, episodes, stepsize=0.001)
     total_errors = zeros(episodes) 
 
     for run in 1:runs
-        current_values = deepcopy(V)
-        current_values[2:6] .= -1.0
-        errors = Float64[]
-        trajectories = Int64[]
-        reward_histories = Int64[]
+        current_values = [0.0, -1.0, -1.0, -1.0, -1.0, -1.0, 1.0]
+        errors = []
+        trajectories = Vector{Vector{Int}}()
+        reward_histories = Vector{Vector{Int}}()
 
         for e in 1:episodes
             if method=="TD"
                 current_values, trajectory, rewards = temporal_difference(current_values, 0.1, true)
-            else
+            elseif method=="MC"
                 current_values, trajectory, rewards = monte_carlo(current_values, 0.1, true)
             end
-            append!(trajectories, trajectory)
-            append!(reward_histories, rewards)
+            push!(trajectories, trajectory)
+            push!(reward_histories, rewards)
 
             while true
                 updates = zeros(7)
-                for (t, r) in zip(trajectories, reward_histories)
-                    for i in 1:(length(t)-1)
+                for (t,r) in zip(trajectories, reward_histories)
+                    for j in 1:(length(t)-1)
                         if method=="TD"
-                            updates[t[i]] += r[i] + current_values[t[i+1]] - current_values[t[i]]
+                            updates[t[j]] += r[j] + current_values[t[j+1]] - current_values[t[j]]
                         else
-                            updates[t[i]] += r[i] - current_values[t[i]]
+                            updates[t[j]] += r[j] - current_values[t[j]]
                         end
                     end
                 end
@@ -179,11 +178,12 @@ function batch_updating(method, episodes, stepsize=0.001)
 end
 
 
-# estimate_values()
-# rms_error()
+# Plot Figure from Example 6.2
+estimate_values()
+rms_error()
 
 # Plot Fig 6.2
-fig_6_2 = plot(legend=:topright,
+fig_6_2 = plot(legend=:topright, ylim=(0.0, 0.25),
                 xlabel="Episodes", ylabel="Empirical RMS Error, averaged over states")
 episodes = 100
 td_errors = batch_updating("TD", episodes)
