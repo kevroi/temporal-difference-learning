@@ -16,19 +16,20 @@ STEP_SIZE = 0.5
 # Reward per timestep
 REWARD = -1.0
 START = [4, 1]
-GOAL = [4, 7]
+GOAL = [4, 8]
 
 
 function step(state, action)
+    # [1,1] is at bottom left
     i, j = state
-    if action == ACTION_UP
-        return [max(i - 1 - WIND[j], 1), j]
-    elseif action == ACTION_DOWN
-        return [max(min(i + 1 - WIND[j], HEIGHT), 1), j]
+    if action == ACTION_DOWN
+        return [max(min(i - 1 + WIND[j], HEIGHT), 1), j]
+    elseif action == ACTION_UP
+        return [max(min(i + 1 + WIND[j], HEIGHT), 1), j]
     elseif action == ACTION_LEFT
-        return [max(i - WIND[j], 1), max(j - 1, 1)]
+        return [max(min(i + WIND[j], HEIGHT), 1), max(j - 1, 1)]
     elseif action == ACTION_RIGHT
-        return [max(i - WIND[j], 1), min(j + 1, WIDTH)]
+        return [max(min(i + WIND[j], HEIGHT), 1), min(j + 1, WIDTH)]
     end
 end
 
@@ -64,7 +65,7 @@ end
 
 function figure_6_3()
     q_value = zeros(HEIGHT, WIDTH, 4)
-    episode_limit = 500
+    episode_limit = 500 # set higher to get better policy
     steps = []
     ep = 0
 
@@ -88,27 +89,17 @@ function figure_6_3()
                 continue
             end
             _, bestAction = findmax(q_value[i, j, :])
-            # print(bestAction)
             if bestAction == ACTION_UP
-                # scatter!(x,y)
-                # quiver!(j, i, quiver=(1,1))
-                # plot!(j, i, quiver=(0.0,1.0), st=:quiver)
-                plot!(fig_inset, [j, j], [i+delta, i-delta],arrow=true,color=:blue,linewidth=2)
-                # scatter!(i, j)
-                # annotate!(j, i, "$j, $i")
-            elseif bestAction == ACTION_DOWN
                 plot!(fig_inset, [j, j], [i-delta, i+delta],arrow=true,color=:blue,linewidth=2)
-                # quiver!(fig_inset, j,i, quiver=(0,-1))
+            elseif bestAction == ACTION_DOWN
+                plot!(fig_inset, [j, j], [i+delta, i-delta],arrow=true,color=:blue,linewidth=2)
             elseif bestAction == ACTION_LEFT
                 plot!(fig_inset, [j+delta, j-delta], [i, i],arrow=true,color=:blue,linewidth=2)
-                # quiver!(fig_inset, j,i, quiver=(-1,0))
             elseif bestAction == ACTION_RIGHT
                 plot!(fig_inset, [j-delta, j+delta], [i, i],arrow=true,color=:blue,linewidth=2)
-                # quiver!(fig_inset, j,i, quiver=(1,0))
             end
         end
     end
-    # plot!(show=true)  
     savefig("Fig_6_3_inset.png") 
 
 end
