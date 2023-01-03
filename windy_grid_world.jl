@@ -15,8 +15,8 @@ EPSILON = 0.1
 STEP_SIZE = 0.5
 # Reward per timestep
 REWARD = -1.0
-START = [3, 1]
-GOAL = [3, 7]
+START = [4, 1]
+GOAL = [4, 7]
 
 
 function step(state, action)
@@ -72,11 +72,45 @@ function figure_6_3()
         append!(steps, episode(q_value))
         ep += 1
     end
-    
+
     steps = cumsum(steps)
-    fig_6_3 = plot(xlabel="Time Steps", ylabel="Episodes", legend = false)
+    fig_6_3 = plot(xlabel="Time Steps", ylabel="Episodes", legend=false)
     plot!(fig_6_3, steps, Array(1:length(steps)))
     savefig("Fig_6_3.png")
+
+
+    fig_inset = plot(legend = false, reuse = false)
+    delta=0.3
+    for i in 1:HEIGHT
+        for j in 1:WIDTH
+            if [i,j] == GOAL
+                annotate!(j, i, "G")
+                continue
+            end
+            _, bestAction = findmax(q_value[i, j, :])
+            # print(bestAction)
+            if bestAction == ACTION_UP
+                # scatter!(x,y)
+                # quiver!(j, i, quiver=(1,1))
+                # plot!(j, i, quiver=(0.0,1.0), st=:quiver)
+                plot!(fig_inset, [j, j], [i+delta, i-delta],arrow=true,color=:blue,linewidth=2)
+                # scatter!(i, j)
+                # annotate!(j, i, "$j, $i")
+            elseif bestAction == ACTION_DOWN
+                plot!(fig_inset, [j, j], [i-delta, i+delta],arrow=true,color=:blue,linewidth=2)
+                # quiver!(fig_inset, j,i, quiver=(0,-1))
+            elseif bestAction == ACTION_LEFT
+                plot!(fig_inset, [j+delta, j-delta], [i, i],arrow=true,color=:blue,linewidth=2)
+                # quiver!(fig_inset, j,i, quiver=(-1,0))
+            elseif bestAction == ACTION_RIGHT
+                plot!(fig_inset, [j-delta, j+delta], [i, i],arrow=true,color=:blue,linewidth=2)
+                # quiver!(fig_inset, j,i, quiver=(1,0))
+            end
+        end
+    end
+    # plot!(show=true)  
+    savefig("Fig_6_3_inset.png") 
+
 end
 
 figure_6_3()
