@@ -20,7 +20,7 @@ GOAL = [4, 8]
 
 
 function step(state, action)
-    # [1,1] is at bottom left
+    # [1,1] is bottom left
     i, j = state
     if action == ACTION_DOWN
         return [max(min(i - 1 + WIND[j], HEIGHT), 1), j]
@@ -54,6 +54,7 @@ function episode(q_value)
             action_ = rand([action_ for (action_, value_) in enumerate(values_) if value_ == maximum(values_)])
 
         end
+        # SARSA update
         q_value[state[1], state[2], action] += STEP_SIZE*(REWARD + q_value[state_[1], state_[2], action_] - q_value[state[1], state[2], action])
         state = state_
         action = action_
