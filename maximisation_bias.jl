@@ -119,15 +119,15 @@ function figure_6_5()
     avg_lefts_q = mean(left_counts_q, dims=1)*100
     avg_lefts_doubleq = mean(left_counts_doubleq, dims=1)*100
 
-    fig_6_5 = plot(xlabel="Episodes", ylabel="% left actions", dpi=200,
+    fig_6_5 = plot(xlabel="Episodes", ylabel="% left actions from A",
                     xlim=(0,300), ylim=(0,100), legend=false, reuse=false)
     plot!(avg_lefts_q[:], color=:red)
     plot!(avg_lefts_doubleq[:], color=:green)
+    hline!([5], linestyle=:dash, color=:black)
     annotate!(100, 50, text("Q learning", :red, :left, 10))
     annotate!(30, 25, text("Double Q learning", :green, :left, 10))
+    annotate!(250, 3, text("optimal", :black, :left, 7))
     savefig("Fig_6_5.png")
 end
 
 figure_6_5()
-
-
