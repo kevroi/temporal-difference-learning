@@ -64,7 +64,7 @@ function episode(q_value)
 end
 
 
-function figure_6_3()
+function example_6_5()
     q_value = zeros(HEIGHT, WIDTH, 4)
     episode_limit = 500 # set higher to get better policy
     steps = []
@@ -78,7 +78,7 @@ function figure_6_3()
     steps = cumsum(steps)
     fig_6_3 = plot(xlabel="Time Steps", ylabel="Episodes", legend=false)
     plot!(fig_6_3, steps, Array(1:length(steps)))
-    savefig("Fig_6_3.png")
+    savefig("Ex_6_5.png")
 
 
     fig_inset = plot(legend = false, reuse = false)
@@ -101,8 +101,8 @@ function figure_6_3()
             end
         end
     end
-    savefig("Fig_6_3_inset.png") 
+    savefig("Ex_6_5_inset.png") 
 
 end
 
-figure_6_3()
+example_6_5()
