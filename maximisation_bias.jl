@@ -119,7 +119,7 @@ function figure_6_5()
     avg_lefts_q = mean(left_counts_q, dims=1)*100
     avg_lefts_doubleq = mean(left_counts_doubleq, dims=1)*100
 
-    fig_6_5 = plot(xlabel="Episodes", ylabel="% left actions", dpi=300,
+    fig_6_5 = plot(xlabel="Episodes", ylabel="% left actions", dpi=200,
                     xlim=(0,300), ylim=(0,100), legend=false, reuse=false)
     plot!(avg_lefts_q[:], color=:red)
     plot!(avg_lefts_doubleq[:], color=:green)
