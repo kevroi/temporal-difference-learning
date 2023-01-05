@@ -78,7 +78,7 @@ function example_6_5()
     steps = cumsum(steps)
     fig_6_3 = plot(xlabel="Time Steps", ylabel="Episodes", legend=false)
     plot!(fig_6_3, steps, Array(1:length(steps)))
-    savefig("Ex_6_5.png")
+    savefig("../plots/Ex_6_5.png")
 
 
     fig_inset = plot(legend = false, reuse = false)
@@ -101,7 +101,7 @@ function example_6_5()
             end
         end
     end
-    savefig("Ex_6_5_inset.png") 
+    savefig("../plots/Ex_6_5_inset.png") 
 
 end
 

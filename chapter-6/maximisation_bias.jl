@@ -127,7 +127,7 @@ function figure_6_5()
     annotate!(100, 50, text("Q learning", :red, :left, 10))
     annotate!(30, 25, text("Double Q learning", :green, :left, 10))
     annotate!(250, 3, text("optimal", :black, :left, 7))
-    savefig("Fig_6_5.png")
+    savefig("../plots/Fig_6_5.png")
 end
 
 figure_6_5()

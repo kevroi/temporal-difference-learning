@@ -84,7 +84,7 @@ function estimate_values()
     end
 
     plot!(fig_l, ["A", "B", "C", "D", "E"], V_true[2:6], label="true values")
-    savefig("Example_6_2_left.png")
+    savefig("../plots/Ex_6_2_left.png")
 
 end
 
@@ -130,7 +130,7 @@ function rms_error()
         total_errors /= runs
         plot!(fig_r, total_errors, label="MC $stepsize", line=(:dash), legendtitle="step size")
     end
-    savefig("Example_6_2_right.png")
+    savefig("../plots/Ex_6_2_right.png")
 end
 
 function batch_updating(method, episodes, stepsize=0.001)
@@ -190,4 +190,4 @@ td_errors = batch_updating("TD", episodes)
 mc_errors = batch_updating("MC", episodes)
 plot!(fig_6_2, td_errors, label="TD")
 plot!(fig_6_2, mc_errors, label="MC")
-savefig("Fig_6_2.png")
+savefig("../plots/Fig_6_2.png")

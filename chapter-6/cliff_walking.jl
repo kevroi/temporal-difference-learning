@@ -129,7 +129,7 @@ function plot_optimal_policy(q_value, method)
             end
         end
     end
-    savefig("Ex_6_5_top_$method.png")
+    savefig("../plots/Ex_6_5_top_$method.png")
 end
 
 
@@ -157,7 +157,7 @@ function example_6_6()
                         xlabel="Episodes", ylabel="Sum of rewards during episode")
     plot!(cum_rewards_sarsa, label="Sarsa")
     plot!(cum_rewards_qlearning, label="Q-learning")
-    savefig("Ex_6_6_bottom.png")
+    savefig("../plots/Ex_6_6_bottom.png")
 
     plot_optimal_policy(q_sarsa, "Sarsa")
     plot_optimal_policy(q_qlearning, "Q-learning")
@@ -257,7 +257,7 @@ function figure_6_3()
     annotate!(0.8, -60, text("Sarsa", :blue, :right, 10))
     annotate!(1.0, -35, text("Expected Sarsa", :red, :right, 10))
     annotate!(0.225, -65, text("Q learning", :black, :right, 10))
-    savefig("Fig_6_3.png")
+    savefig("../plots/Fig_6_3.png")
 end
         
 
