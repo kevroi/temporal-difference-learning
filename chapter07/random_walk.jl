@@ -71,8 +71,43 @@ function temporal_difference(value, n, step_size)
             break
         end
         state = state_
-
-
-
-
+    return value
 end
+
+
+function figure_7_2()
+    ns = exp2.(0:9)
+    step_sizes = 0:0.1:1
+
+    episodes = 10
+    runs=100
+
+    errors = zeros(len(ns), len(step_sizes))
+
+    for run in 1:runs
+        for (i, n) in enumerate(ns)
+            for (j, step_size) in enumerate(step_sizes)
+                value = zeros(N_STATES+2)
+                for e in 1:episodes
+                    value = temporal_difference(value, n, step_size)
+                    errors[i, j] += sqrt(sum((value-TRUE_VALUE).^2)/N_STATES)
+                end
+            end
+        end
+    end
+
+    errors /= episodes * runs
+
+    fig_7_2 = plot(legend=true, ylim=(0.25, 0.55),
+                    xlabel="step_size", ylabel="Empirical RMS Error, averaged over states")
+    for i in 1:ns
+        plot!(step_sizes, erros[i, :], label="n = $(ns[i])")
+    end
+    savefig("../plots/Fig_7_2.png")
+end
+
+figure_7_2()
+    
+
+
+
