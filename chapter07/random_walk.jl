@@ -53,7 +53,8 @@ function temporal_difference(value, n, step_size)
             local states_to_update
             returns = 0.0
 
-            for t in update_time:min(T,update_time+n)
+            upto = trunc(Int, min(T,update_time+n))
+            for t in trunc(Int, update_time):upto
                 returns += DISCOUNT_FACTOR^(t-update_time)*reward_history[t]
             end
 
@@ -71,6 +72,7 @@ function temporal_difference(value, n, step_size)
             break
         end
         state = state_
+    end
     return value
 end
 
@@ -82,7 +84,7 @@ function figure_7_2()
     episodes = 10
     runs=100
 
-    errors = zeros(len(ns), len(step_sizes))
+    errors = zeros(length(ns), length(step_sizes))
 
     for run in 1:runs
         for (i, n) in enumerate(ns)
