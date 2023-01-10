@@ -5,7 +5,7 @@ Start Julia, activate the project, `cd` into the right chapter and run the `.jl`
 ```sh-session
 $ julia
 $ julia> ]
-$ (@v1.8) pkg> activate . # press backspace after this to return to Julia REPL
+$ (@v1.6) pkg> activate . # press backspace after this to return to Julia REPL
 $ julia> cd("chapter06")
 $ julia> include("random_walk.jl")
 ```
