@@ -12,7 +12,7 @@ TRUE_VALUE = Array(-1:0.1:1)
 TRUE_VALUE[begin] = 0.0
 TRUE_VALUE[end] = 0.0
 
-function temporal_difference(value, n, step_size)
+function temporal_difference(values, n, step_size)
     s = STATE_START
 
     state_trajectory = [s]
@@ -49,29 +49,33 @@ function temporal_difference(value, n, step_size)
 
         update_time = t - n
 
-        if update_time >= 0
+        if update_time >= 1
             local states_to_update
             returns = 0.0
 
-            upto = trunc(Int, min(T,update_time+n))
-            for t in trunc(Int, update_time):upto
-                returns += DISCOUNT_FACTOR^(t-update_time)*reward_history[t]
+            # upto = trunc(Int, min(T,update_time+n))
+            upto = min(T, Int(update_time+n))
+            # for t in trunc(Int, update_time):upto
+            for t in (update_time+1):upto
+                t = Int(t)
+                # print(t)
+                returns += DISCOUNT_FACTOR^(t-update_time-1)*reward_history[t]
             end
 
             if update_time+n<=T
-                returns += DISCOUNT_FACTOR^(n)*values[state_trajectory[update_time+n]]
+                returns += (DISCOUNT_FACTOR^n)*values[state_trajectory[update_time+n]]
             end
             state_to_update = state_trajectory[update_time]
 
             if !(state_to_update in STATES_TERMINAL)
-                value[state_to_update] += step_size*(returns - value[state_to_update])
+                values[state_to_update] += step_size*(returns - values[state_to_update])
             end
         end
 
         if update_time == T - 1
             break
         end
-        state = state_
+        s = s_
     end
     return value
 end
@@ -79,6 +83,7 @@ end
 
 function figure_7_2()
     ns = exp2.(0:9)
+    ns = Int.(ns)
     step_sizes = 0:0.1:1
 
     episodes = 10
