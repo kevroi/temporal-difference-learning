@@ -4,7 +4,7 @@ using Plots
 N_STATES = 19
 STATES = Array(1:N_STATES)
 STATE_START = 10
-STATES_TERMINAL = [1, 19]
+STATES_TERMINAL = [0, 20]
 p_right = 0.5
 # GAMMA
 DISCOUNT_FACTOR = 1
@@ -14,6 +14,7 @@ TRUE_VALUE[end] = 0.0
 
 function temporal_difference(values, n, step_size)
     s = STATE_START
+    local s_
 
     state_trajectory = [s]
     reward_history = [0]
@@ -31,9 +32,9 @@ function temporal_difference(values, n, step_size)
                 s_ = s - 1
             end
 
-            if s_ == 1
+            if s_ == 0
                 reward = -1
-            elseif s_ == 19
+            elseif s_ == 20
                 reward = 1
             else
                 reward = 0
@@ -43,7 +44,7 @@ function temporal_difference(values, n, step_size)
             append!(reward_history, reward)
 
             if s_ in STATES_TERMINAL
-                T = time
+                T = t
             end
         end
 
@@ -77,7 +78,7 @@ function temporal_difference(values, n, step_size)
         end
         s = s_
     end
-    return value
+    return values
 end
 
 
@@ -107,8 +108,8 @@ function figure_7_2()
 
     fig_7_2 = plot(legend=true, ylim=(0.25, 0.55),
                     xlabel="step_size", ylabel="Empirical RMS Error, averaged over states")
-    for i in 1:ns
-        plot!(step_sizes, erros[i, :], label="n = $(ns[i])")
+    for i in 1:length(ns)
+        plot!(step_sizes, errors[i, :], label="n = $(ns[i])")
     end
     savefig("../plots/Fig_7_2.png")
 end
